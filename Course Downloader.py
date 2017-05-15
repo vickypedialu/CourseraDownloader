@@ -61,20 +61,8 @@ def login(email,password):
         
 """     
 
-"""
-复旦大学 网络游戏设计与开发毕业项目（https://www.coursera.org/learn/wangluo-youxi-biye）
-以及 创作吧！微影人！（https://www.coursera.org/learn/wei-dian-ying-chuang-zuo）无法注册
-北京大学 程序开发项目实践
-
-提示信息：您只能在完成专项课程中的课程之后访问毕业项目。
-
-缺省字幕： ruanjian-ceshi_week5_7.srt
-aoo_week5_9.srt
-
-乱码字幕：java-chengxu-sheji_week1_4.srt
-
-"""
-
+# Replace the original urlretrieve to avoid download failure with unstable Internet.
+# This function will try several times(depending on argument maxtries) if downloaded file is not complete.
 def safe_retrieve(url, filename=None, reporthook=None, data=None, maxtries=5, r_range=None):
     if maxtries < -1:
        raise ValueError('maxtries must be at least equal with -1')
@@ -150,16 +138,17 @@ def get_length(subtitle,video_time):
     video_time[1] += end_second - start_second
         
     
-    
-proxy_support = urlRequest.ProxyHandler({"https":"amylzy0204@163.com@http://127.0.0.1:58522"})
+# For Mainland Internet users, it's usually difficult to download coursera videos.  
+# If you have applied for any proxy server(I myself used Lantern proxy), set here to boost the downloading process.
+proxy_support = urlRequest.ProxyHandler({"https":"..."}) # your proxy port and user ID(if needed)
 opener = urlRequest.build_opener(proxy_support)
 urlRequest.install_opener(opener)
 
 
 
-email = "amylzy0204@163.com" #your email
-password = "wodeyinsiwdj"    #your password
-wait_time = 5  # 操作页面时等待一些时间，看起来不那么像机器
+email = "..." #your coursera ID email
+password = "..."    #your password
+wait_time = 5  # wait some time so as not to be recognized as machine 
 
 driver = webdriver.Chrome()   #start webdriver
 
@@ -208,6 +197,8 @@ for i in range(0,courses_limit+1):
     time.sleep(wait_time*2)
     ch_title = driver.find_element_by_class_name("course-name").text
     school = driver.find_element_by_class_name("partner-names").text[4:]
+
+	# estimate the length of video downloaded(optional) 
     workbook = load_workbook('D:/coursera/coursera.xlsx')
     worksheet = workbook.active
     worksheet.cell('A'+str(i+2+courses_loaded)).value = ch_title
